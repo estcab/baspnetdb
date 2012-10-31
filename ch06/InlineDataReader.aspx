@@ -32,7 +32,9 @@
             if (reader.Read())
             {
                 // Enlazamos los controles
-                Page.DataBind();
+                //Page.DataBind();
+                //CountryLabel.DataBind();
+                Links.DataBind();
             }
             else
             {
@@ -59,23 +61,21 @@
         <asp:Label ID="NameLabel" runat="server">
             Name: <%# DataBinder.Eval(reader, "[ManufacturerName]") %>
         </asp:Label>
-        <br />        
+        <br />
         Country:
-        <asp:Label ID="CountryLabel" runat="server" 
-                   Text='<%# DataBinder.Eval(reader, "[ManufacturerCountry]") %>' />
+        <asp:Label ID="CountryLabel" runat="server" Text='<%# DataBinder.Eval(reader, "[ManufacturerCountry]") %>' />
         <br />
-        Email:
-        <asp:HyperLink ID="EmaiLink" runat="server" 
-                       NavigateUrl='<%# DataBinder.Eval(reader, "[2]", "mailto:{0}") %>'
-                       Text='<%# DataBinder.Eval(reader, "[ManufacturerEmail]") %>' />
-        <br />
-        Website:
-        <asp:HyperLink ID="WebsiteLink" runat="server" 
-                        NavigateUrl='<%# DataBinder.Eval(reader, "[3]") %>'>
+        <asp:Panel ID="Links" runat="server">
+            Email:
+            <asp:HyperLink ID="EmaiLink" runat="server" NavigateUrl='<%# DataBinder.Eval(reader, "[2]", "mailto:{0}") %>'
+                Text='<%# DataBinder.Eval(reader, "[ManufacturerEmail]") %>' />
+            <br />
+            Website:
+            <asp:HyperLink ID="WebsiteLink" runat="server" NavigateUrl='<%# DataBinder.Eval(reader, "[3]") %>'>
             <%# DataBinder.Eval(reader, "[ManufacturerWebsite]") %>
-        </asp:HyperLink>
-                        
-        <br />
+            </asp:HyperLink>
+            <br />
+        </asp:Panel>
         <asp:Label ID="ErrorLabel" runat="server" />
     </div>
     </form>
