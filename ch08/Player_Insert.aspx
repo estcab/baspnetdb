@@ -89,32 +89,37 @@
 
     protected void SubmitButton_Click(object sender, EventArgs e)
     {
-        // Guardamos el reproductor en la base de datos
-        int playerID = SavePlayer();
-
-        // Comprobamos si se ha producido un error
-        if (playerID == -1)
+        // Comprobamos que todos los controles han pasado la validacion
+        if (Page.IsValid)
         {
-            // Informamos del error
-            QueryResult.Text = "An error has occurred!";
-        }
-        else
-        {
-            // Si el reproductor se he añadido correctamente insertamos los formatos
-            bool blnError = SaveFormats(playerID);
+            // Guardamos el reproductor en la base de datos
+            int playerID = SavePlayer();
 
-            // Revisamos de nuevo por un error
-            if (blnError)
+            // Comprobamos si se ha producido un error
+            if (playerID == -1)
             {
+                // Informamos del error
                 QueryResult.Text = "An error has occurred!";
             }
             else
             {
-                QueryResult.Text = "Save of player '" + playerID.ToString() + "' was successful";
+                // Si el reproductor se he añadido correctamente insertamos los formatos
+                bool blnError = SaveFormats(playerID);
 
-                SubmitButton.Enabled = false;
+                // Revisamos de nuevo por un error
+                if (blnError)
+                {
+                    QueryResult.Text = "An error has occurred!";
+                }
+                else
+                {
+                    QueryResult.Text = "Save of player '" + playerID.ToString() + "' was successful";
+
+                    SubmitButton.Enabled = false;
+                }
             }
         }
+
     }
 
     // Metodo que inserta un registro en la  bbdd
@@ -215,7 +220,16 @@
     {
         Response.Redirect("~/Players.aspx");
     }
+
+    protected void Unnamed6_ServerValidate(object source, ServerValidateEventArgs args)
+    {
+        if (FormatCheckBoxList.SelectedIndex == -1)
+        {
+            args.IsValid = false;
+        }
+    }
 </script>
+
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title>INSERT Player</title>
@@ -226,7 +240,10 @@
         }
         .style2
         {
-            width: 171px;
+        }
+        .style3
+        {
+            width: 160px;
         }
     </style>
 </head>
@@ -235,57 +252,76 @@
     <div>
         <table class="style1">
             <tr>
-                <td class="style2">
+                <td class="style2" colspan="2">
+                    <asp:ValidationSummary ID="ValidationSummary1" runat="server" />
+                </td>
+            </tr>
+            <tr>
+                <td class="style3">
                     Player Name:
                 </td>
                 <td>
                     <asp:TextBox ID="PlayerNameTextBox" runat="server"></asp:TextBox>
+                    <asp:RequiredFieldValidator ErrorMessage="You must enter a name." ControlToValidate="PlayerNameTextBox"
+                        runat="server" Display="Dynamic" Text="*" />
                 </td>
             </tr>
             <tr>
-                <td class="style2">
+                <td class="style3">
                     Manufacturer:
                 </td>
                 <td>
                     <asp:DropDownList ID="ManufacturerListDropDownList" runat="server" OnDataBound="ManufacturerListDropDownList_DataBound">
                     </asp:DropDownList>
+                    <asp:CompareValidator ErrorMessage="You must select a manufacturer." ControlToValidate="ManufacturerListDropDownList"
+                        runat="server" Display="Dynamic" Text="*" Operator="NotEqual" ValueToCompare="0" />
                 </td>
             </tr>
             <tr>
-                <td class="style2">
+                <td class="style3">
                     Player Cost:
                 </td>
                 <td>
                     <asp:TextBox ID="PlayerCostTextBox" runat="server"></asp:TextBox>
+                    <asp:RegularExpressionValidator ErrorMessage="You must specify the cost as a decimal."
+                        ControlToValidate="PlayerCostTextBox" runat="server" Text="*" Display="Dynamic"
+                        ValidationExpression="^\d+(\.\d\d)" />
+                    <asp:RequiredFieldValidator ErrorMessage="You must enter a cost." ControlToValidate="PlayerCostTextBox"
+                        runat="server" Text="*" Display="Dynamic" />
                 </td>
             </tr>
             <tr>
-                <td class="style2">
+                <td class="style3">
                     Player Storage:
                 </td>
                 <td>
                     <asp:TextBox ID="PlayerStorageTextBox" runat="server"></asp:TextBox>
+                    <asp:RequiredFieldValidator ErrorMessage="You must enter a storage type." ControlToValidate="PlayerStorageTextBox"
+                        runat="server" Text="*" Display="Dynamic" />
                 </td>
             </tr>
             <tr>
-                <td class="style2">
+                <td class="style3">
                     Supported Formats:
                 </td>
                 <td>
                     <asp:CheckBoxList ID="FormatCheckBoxList" runat="server" RepeatColumns="4" RepeatDirection="Horizontal">
                     </asp:CheckBoxList>
+                    <asp:CustomValidator ErrorMessage="You must select at least one format." runat="server"
+                        Text="*" Display="Dynamic" OnServerValidate="Unnamed6_ServerValidate" />
                 </td>
             </tr>
             <tr>
-                <td class="style2">
+                <td class="style3">
                     <asp:Button ID="SubmitButton" runat="server" Text="Insert Player" OnClick="SubmitButton_Click" />
                 </td>
                 <td>
-                    <asp:Button ID="ReturnButton" runat="server" Text="Return To Players List" OnClick="ReturnButton_Click" />
+                    <asp:Button ID="ReturnButton" runat="server" Text="Return To Players List" OnClick="ReturnButton_Click"
+                        CausesValidation="False" />
                 </td>
             </tr>
             <tr>
-                <td class="style2">
+                <td class="style3">
                     <asp:Label ID="QueryResult" runat="server"></asp:Label>
                 </td>
                 <td>
