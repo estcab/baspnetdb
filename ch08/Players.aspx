@@ -5,16 +5,21 @@
 
     protected void GridView1_RowCommand(object sender, GridViewCommandEventArgs e)
     {
-        // Verificamos que el control que ha generado el evento es  el boton 'delete'
+        // Obtenemos el numero de fila que  ha generado  el  evento
+        int index = Convert.ToInt32(e.CommandArgument);
+        // Con este indice obtenemos la id  del reproductor
+        string playerID = GridView1.DataKeys[index].Value.ToString();
+        
+        // Seleccionamos la accion  correcta  en funcion del boton pulsado
         if (e.CommandName == "DeletePlayer")
-        {
-            // Obtenemos el numero de fila que  ha generado  el  evento
-            int index = Convert.ToInt32(e.CommandArgument);
-            // Con este indice obtenemos la id  del  reproductor que queremos borrar
-            string playerID = GridView1.DataKeys[index].Value.ToString();
-            
+        {    
             // Redirigimos la respuesta a la pagina de confirmacion
             Response.Redirect("./Player_Delete.aspx?PlayerID=" + playerID);
+        }
+        else if (e.CommandName == "EditPlayer")
+        {
+            // Redirigimos la respuesta a la pagina de modificacion
+            Response.Redirect("./Player_Update.aspx?PlayerID=" + playerID);
         }
     }
 </script>
@@ -38,6 +43,7 @@
                 <asp:BoundField DataField="PlayerCost" HeaderText="PlayerCost" SortExpression="PlayerCost"
                     DataFormatString="{0:C}" />
                 <asp:ButtonField CommandName="DeletePlayer" Text="Delete" ButtonType="Button" />
+                <asp:ButtonField ButtonType="Button" CommandName="EditPlayer" Text="Edit" />
             </Columns>
         </asp:GridView>
     </div>
